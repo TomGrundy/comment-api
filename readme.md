@@ -1,21 +1,46 @@
-# Lumen PHP Framework
+# Lumen Comment API Example
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+To run:
+- Copy `.env.example` to `.env`
+- Modify the `.env` file to connect to a local database and give it an `APP_KEY`
+- Create the database you named in the `.env` file
+- Run migrations with `php artisan migrate`
+- Seed the database with `php artisan db:seed`
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+Two users will be seeded into the database, one moderator and one standard user.
+For requests from the standard user, set an `Api-Token` header of `abc123`.
+For requests from the moderator, set an `Api-Token` header of `xyz789`.
 
-## Official Documentation
+## Endpoints
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+### api/v1/thread/{id}
+Either creates a new thread or loads a thread and its comments, depending on if a `thread_id` parameter was provided or not.
 
-## Security Vulnerabilities
+### api/v1/comment
+Creates or updates a comment.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+###### Example post body
+```
+{
+    body: 'some arbitrary bunch of text',
+    thread_id: 1, // required
+    parent_id: 2, // optional
+    comment_id: 3 // optional, set if updating an existing comment
+}
+```
 
-## License
+### api/v1/comment/{commentId}/moderate
+Moderates a comment.
 
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+### api/v1/comment/{commentId}/rate/{ratingValue}
+Adds or updates a rating of a comment.
+
+###### Example post body
+```
+{
+    rating_id: 4 // optional, set if updating an existing rating
+}
+```
+
+### api/v1/comments/{userId}
+Lists all comments for the given user ID.
